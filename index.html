@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b615a">
+<meta name="description" content="Protótipo acadêmico: organização de trabalhos acadêmicos em grupo — etapas, arquivos com versões e dúvidas em um só lugar.">
+<title>Etapa — o trabalho do grupo em um só lugar</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><span class="brandmark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h5v-5h5V8h6"/><circle cx="20" cy="8" r="1.2" fill="#fff"/></svg></span><span id="brand-name">Etapa</span></div>
+    <div class="side-project">
+      <div class="side-label">Trabalho</div>
+      <select class="project-select" id="project-select" aria-label="Trabalho selecionado"></select>
+    </div>
+    <nav class="nav" aria-label="Seções">
+      <button data-view="inicio" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Visão geral<span class="count" id="nav-alerts" hidden></span></button>
+      <button data-view="etapas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M6 8.5v7M11 6h9M11 18h9M11 12h6"/></svg>Etapas e tarefas</button>
+      <button data-view="arquivos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>Arquivos</button>
+      <button data-view="duvidas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 0 1 4.8 1c0 1.7-2.3 2-2.3 3.3M12 16.6h.01"/></svg>Dúvidas<span class="count" id="nav-questions" hidden></span></button>
+      <button data-view="equipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c.6-3.4 3-5 6-5s5.4 1.6 6 5M16 5.5a3 3 0 0 1 0 5.5M18 15c1.8.6 2.8 2.2 3 5"/></svg>Equipe</button>
+    </nav>
+    <div class="side-foot">
+      Protótipo acadêmico. Os dados ficam salvos apenas neste navegador.
+      <div><button id="btn-new-project" type="button">+ Novo trabalho</button> <button id="btn-reset" type="button">Restaurar exemplo</button></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow" id="top-course"></div>
+        <h1 id="top-title"></h1>
+        <div class="meta"><span id="top-due"></span><span id="top-members"></span></div>
+      </div>
+      <div class="top-actions">
+        <label class="whoami">Você é <select id="me-select" aria-label="Simular integrante"></select></label>
+      </div>
+    </header>
+
+    <!-- VISÃO GERAL -->
+    <section class="view active" id="view-inicio">
+      <div class="grid-4">
+        <div class="card metric"><div class="label">Progresso do trabalho</div><div class="value" id="m-progress">0%</div><div class="track"><div id="m-progress-bar"></div></div></div>
+        <div class="card metric"><div class="label">Etapas concluídas</div><div class="value" id="m-stages">0/0</div><div class="foot" id="m-stages-foot"></div></div>
+        <div class="card metric"><div class="label">Prazo final</div><div class="value" id="m-days">—</div><div class="foot" id="m-days-foot"></div></div>
+        <div class="card metric"><div class="label">Dúvidas em aberto</div><div class="value" id="m-questions">0</div><div class="foot" id="m-questions-foot"></div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <h2>Atenção agora</h2>
+            <div id="alerts"></div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <h2>Próximas entregas <button class="btn small secondary" data-goto="etapas" type="button">Ver etapas</button></h2>
+            <div id="upcoming"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h2>Minhas responsabilidades</h2>
+            <div id="mine"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ETAPAS -->
+    <section class="view" id="view-etapas">
+      <div class="section-head">
+        <div><div class="eyebrow">Sequência do trabalho</div><h2>Etapas e tarefas</h2><p>Cada etapa tem um responsável e um prazo. Se uma atrasar, quem vem depois é avisado.</p></div>
+        <button class="btn" id="btn-new-stage" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Nova etapa</button>
+      </div>
+      <ol class="pipeline" id="pipeline"></ol>
+    </section>
+
+    <!-- ARQUIVOS -->
+    <section class="view" id="view-arquivos">
+      <div class="section-head">
+        <div><div class="eyebrow">Tudo em um lugar</div><h2>Arquivos do trabalho</h2><p>Cada envio vira uma nova versão (R1, R2, R3...) com autor, data e o que mudou. Nada se perde no WhatsApp.</p></div>
+        <button class="btn" id="btn-new-file" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Novo arquivo</button>
+      </div>
+      <div id="files"></div>
+    </section>
+
+    <!-- DÚVIDAS -->
+    <section class="view" id="view-duvidas">
+      <div class="section-head">
+        <div><div class="eyebrow">Canal do grupo</div><h2>Dúvidas</h2><p>Pergunte ao grupo primeiro. O que precisar do professor fica marcado para o representante levar.</p></div>
+        <button class="btn" id="btn-new-question" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Nova dúvida</button>
+      </div>
+      <div class="tabs" id="q-tabs">
+        <button data-qf="open" class="active" type="button">Em aberto</button>
+        <button data-qf="prof" type="button">Para o professor</button>
+        <button data-qf="resolved" type="button">Resolvidas</button>
+        <button data-qf="all" type="button">Todas</button>
+      </div>
+      <div id="questions"></div>
+    </section>
+
+    <!-- EQUIPE -->
+    <section class="view" id="view-equipe">
+      <div class="section-head">
+        <div><div class="eyebrow">Quem faz o quê</div><h2>Equipe</h2><p>A participação de cada um fica visível: etapas, versões enviadas e respostas.</p></div>
+        <button class="btn" id="btn-new-member" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Adicionar integrante</button>
+      </div>
+      <div class="team" id="team"></div>
+    </section>
+
+    <p class="proto-note">Protótipo acadêmico (MVP) · Dados salvos apenas neste navegador, sem login.</p>
+  </main>
+</div>
+
+<!-- Dialogs -->
+<dialog id="dlg"><form method="dialog" class="dlg" id="dlg-form"></form></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
